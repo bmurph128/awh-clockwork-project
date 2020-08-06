@@ -1,0 +1,56 @@
+﻿<script>
+    function getTime() {
+        var x = document.getElementById("timezone").selectedIndex;
+        var timezone = document.getElementsByTagName("option")[x].value;
+        console.log(timezone);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("output").innerHTML = this.responseText;
+                //how to assign this to specific elements in Javascript?
+                getEntries();
+            }
+        };
+        xhttp.open("GET", "http://localhost:50221/api/currenttime?timezone=" + timezone, true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send();
+    }
+
+    function getEntries() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                document.getElementById("entries").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "http://localhost:50221/api/currenttime/entries", true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send();
+
+    }
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+        getEntries();
+    });
+
+    
+
+</script>
+
+<h2>AWH Clockwork Project @ViewData["Version"] on @ViewData["Runtime"]!</h2>
+
+<label for="timezone">Select your timezone</label>
+<select name="timezone" id="timezone">
+    <option value="Eastern">Eastern Standard Time</option>
+    <option value="Central">Central Standard Time</option>
+    <option value="Pacific">Pacific Standard Time</option>
+    <option value="Mountain">Mountain Standard Time</option>
+
+</select>
+
+<button type="submit" onclick="getTime()">Get the time</button>
+
+<p id="output"></p>
+<p id="entries"></p>
+
