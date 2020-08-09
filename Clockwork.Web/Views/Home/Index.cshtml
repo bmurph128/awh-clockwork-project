@@ -1,4 +1,8 @@
 ﻿<script>
+    /**
+     *Sends selected timezone to controller to be added to database; returns current time and adds to a table
+     * @@param  {timezone}
+     * */
     function getTime() {
         var x = document.getElementById("timezone").selectedIndex;
         var timezone = document.getElementsByTagName("option")[x].value;
@@ -6,9 +10,29 @@
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("output").innerHTML = this.responseText;
-                //how to assign this to specific elements in Javascript?
-                getEntries();
+
+                var getTimeResult = JSON.parse(this.responseText);
+                var tbody = document.getElementById("getTimeResult");
+                var tr = document.createElement("tr");
+
+                var col1 = document.createElement("td");
+                col1.innerText = getTimeResult.timezone;
+
+                var col2 = document.createElement("td");
+                col2.innerText = moment(getTimeResult.time).format("MM/DD/YYYY, h:mm:ss a");
+
+                var col3 = document.createElement("td");
+                col3.innerText = getTimeResult.utcTime;
+
+                tr.appendChild(col1);
+                tbody.appendChild(tr);
+
+                tr.appendChild(col2);
+                tbody.appendChild(tr);
+
+                tr.appendChild(col3);
+                tbody.appendChild(tr);
+
             }
         };
         xhttp.open("GET", "http://localhost:50221/api/currenttime?timezone=" + timezone, true);
@@ -16,12 +40,44 @@
         xhttp.send();
     }
 
+    /**
+     * Returns all database entries and puts them in a table
+     * */
     function getEntries() {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 console.log(this.responseText);
-                document.getElementById("entries").innerHTML = this.responseText;
+
+                var results = JSON.parse(this.responseText);
+                var tbody = document.getElementById("results");
+
+                results.forEach(result => {
+                    var tr = document.createElement("tr");
+
+                    var col1 = document.createElement("td");
+                    col1.innerText = result.timezone;
+
+                    var col2 = document.createElement("td");
+                    col2.innerText = moment(result.time).format("MM/DD/YYYY, h:mm:ss a");
+
+                    var col3 = document.createElement("td");
+                    col3.innerText = result.utcTime;
+
+                    tr.appendChild(col1);
+                    tbody.appendChild(tr);
+
+                    tr.appendChild(col2);
+                    tbody.appendChild(tr);
+
+                    tr.appendChild(col3);
+                    tbody.appendChild(tr);
+
+                    results = null;
+                });
+
+
+
             }
         };
         xhttp.open("GET", "http://localhost:50221/api/currenttime/entries", true);
@@ -30,27 +86,237 @@
 
     }
 
-    document.addEventListener("DOMContentLoaded", function (event) {
+    /**
+     * calls getEntries method when site is loaded
+     */
+    document.addEventListener("DOMContentLoaded", function(event) {
         getEntries();
     });
 
-    
+    /**
+     * allows previous database entries table data to be blurred
+     */
+    function toggleBlur() {
+        document.getElementById("results").classList.toggle("blur");
+    }
 
 </script>
 
-<h2>AWH Clockwork Project @ViewData["Version"] on @ViewData["Runtime"]!</h2>
+<style>
 
-<label for="timezone">Select your timezone</label>
-<select name="timezone" id="timezone">
-    <option value="Eastern">Eastern Standard Time</option>
-    <option value="Central">Central Standard Time</option>
-    <option value="Pacific">Pacific Standard Time</option>
-    <option value="Mountain">Mountain Standard Time</option>
+        body{
+            margin: 0;
+        }
 
-</select>
+    
+        h2{
+            font-size: 24px;
+        }
 
-<button type="submit" onclick="getTime()">Get the time</button>
+    
+        a:link{
+            color: lightgoldenrodyellow;
+        }
 
-<p id="output"></p>
-<p id="entries"></p>
+        a:visited {
+            color: lightgoldenrodyellow;
+        }
 
+        table {
+            width: 75%;
+            table-layout: fixed;
+            min-width: 400px;
+            border: 1px solid white;
+            border-collapse: collapse;
+        }
+
+        table thead tr td {
+            border: 1px solid white;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        tbody tr td {
+            border: 1px solid white;
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bolder;
+            text-shadow: black 0px 0px 10px;
+        }
+
+        button{
+            background-color: lightgoldenrodyellow;
+            width: 180px;
+            font-size: 26px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #timezone-header{
+            padding: 10px;
+            font-size: 24px;
+        }
+
+        #timezone{
+            font-size: 20px;
+        }
+
+        #utc{
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        #toggle{
+            font-size: 18px;
+            width: 325px;
+            height: 50px;
+        }
+
+        .background {
+            background-position: center;
+            background-size: cover;
+        }
+
+        .base{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            
+        }
+
+        .blur{
+            -webkit-filter: blur(3px);
+        }
+
+    @@media only screen and (max-width: 399px){
+
+        .background {
+            background-color: #471f08;
+            background-image: linear-gradient(62deg, #471f08 0%, #F7CE68 100%);
+        }
+
+        
+        table {
+            width: 50%;
+            table-layout: fixed;
+            min-width: 300px;
+            border: 1px solid white;
+            border-collapse: collapse;
+        }
+
+        tbody tr td {
+            font-size: 7px; 
+        }
+
+        table thead tr td { 
+            font-size: 10px;
+        }
+
+        h2 {
+            font-size: 16px;
+        }
+
+        button {
+            background-color: lightgoldenrodyellow;
+            width: 180px;
+            font-size: 14px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #toggle {
+            font-size: 14px;
+            width: 250px;
+            height: 50px;
+        }
+    }
+
+    @@media only screen and (min-width: 400px) and (max-width: 480px) {
+        .background {
+            background-color: #471f08;
+            background-image: linear-gradient(62deg, #471f08 0%, #F7CE68 100%);
+        }
+
+        tbody tr td {
+            border: 1px solid white;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bolder;
+            text-shadow: black 0px 0px 10px;
+        }
+
+        table thead tr td {
+            border: 1px solid white;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+    }
+   
+    @@media only screen and (min-width: 481px) and (max-width: 768px) {
+        .background {
+            background-color: #8d9993;
+            background-image: linear-gradient(45deg, #8d9993 0%, #131312 100%);
+        }
+      
+    }
+
+    @@media only screen and (min-width: 769px) {
+        .background {
+            background-image: url(https://images.wallpaperscraft.com/image/clock_dial_fractal_148024_2560x1440.jpg);
+            background-color: #8d9993;
+        }
+    }
+
+</style>
+
+<div class="base background">
+    <h2>AWH Clockwork Project @ViewData["Version"] on @ViewData["Runtime"]!</h2>
+
+    <label for="timezone" id="timezone-header">Select your timezone</label>
+    <select name="timezone" id="timezone">
+        <option value="Eastern">Eastern Standard Time</option>
+        <option value="Central">Central Standard Time</option>
+        <option value="Pacific">Pacific Standard Time</option>
+        <option value="Mountain">Mountain Standard Time</option>
+
+    </select>
+
+    <button type="submit" onclick="getTime()">Get the time</button>
+
+    <p id="utc">Why UTC time?</p>
+    <p>
+        Coordinated Universal Time (UTC) is the basis for modern timekeeping. Among other things, it provides a common baseline for converting between incremental and local time. The time zone offset for UTC is 0. UTC is often indicated in field-based formats using Z -
+        <a href="https://en.wikipedia.org/wiki/Coordinated_Universal_Time">More information about UTC time</a>
+    </p>
+    <h2>Your Requests</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>Timezone</td>
+                <td>Time</td>
+                <td>Coordinated Universal Time</td>
+            </tr>
+        </thead>
+        <tbody id="getTimeResult"></tbody>
+    </table>
+
+    <h2>Previous Requests</h2>
+    <button type="submit" id="toggle" onclick="toggleBlur()">Show/hide previous requests</button>
+    <table>
+        <thead>
+            <tr>
+                <td>Timezone</td>
+                <td>Time</td>
+                <td>Coordinated Universal Time</td>
+            </tr>
+        </thead>
+        <tbody class="blur" id="results"></tbody>
+    </table>
+    <p id="entries"></p>
+</div>

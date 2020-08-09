@@ -12,7 +12,7 @@ namespace Clockwork.API.Controllers
     {
         // GET api/currenttime
         [HttpGet]
-        public IActionResult Get([FromQuery]string timezone) //how to pass this in?
+        public IActionResult Get([FromQuery]string timezone)
         {
             var utcTime = DateTime.UtcNow;
             var serverTime = DateTime.Now;
@@ -46,7 +46,6 @@ namespace Clockwork.API.Controllers
             var returnVal = new CurrentTimeQuery
 
             {
-                //how to add a timezone column to data base?
                 UTCTime = utcTime,
                 ClientIp = ip,
                 Time = serverTime,
