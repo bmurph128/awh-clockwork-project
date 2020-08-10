@@ -87,14 +87,14 @@
     }
 
     /**
-     * calls getEntries method when site is loaded
+     * calls getEntries function when site is loaded
      */
     document.addEventListener("DOMContentLoaded", function(event) {
         getEntries();
     });
 
     /**
-     * allows previous database entries table data to be blurred
+     * allows previous database entries table data to be shown and hidden via blur effect
      */
     function toggleBlur() {
         document.getElementById("results").classList.toggle("blur");
